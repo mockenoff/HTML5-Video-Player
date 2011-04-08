@@ -19,6 +19,18 @@ Your <video> element must have its *width* and *height* attributes specified.
 * close:function - callback function for when the player is closed
 * open:function - callback function for when the player is opened
 
+## Methods
+
+* open() - opens the player
+* close() - closes the player
+* play() - starts or resumes play of the video
+* pause() - pauses the video
+* toggle() - switches between playing and paused states of the video
+* stop() - stops the video
+* showControls() - bubbles up the controls
+* hideControls() - hides the controls
+* setTime(time:float) - skips to the time specified (in seconds)
+
 ## Known Issues
 
 It currently only works in **Webkit** browsers (since that was the only browser I needed it to work in at the time).
