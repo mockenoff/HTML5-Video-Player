@@ -1,0 +1,111 @@
+.video-player-wrapper {
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	z-index:9999;
+	color:#FFFFFF;
+	position:absolute;
+	background:rgba(0,0,0,.85);
+	-webkit-user-select:none;
+}
+	.video-player-wrapper .video-player-skip {
+		width:40px;
+		height:40px;
+		border:2px solid #FFFFFF;
+		border-radius:20px;
+		background:#000000;
+		position:absolute;
+		text-align:center;
+		font-size:30px;
+	}
+.video-player {
+	position:absolute;
+	overflow:hidden;
+}
+.video-player-bar {
+	position:absolute;
+	bottom:0;
+	left:0;
+	width:100%;
+	height:65px;
+	background:-webkit-linear-gradient(left,rgba(0,0,0,.7) 0px,rgba(0,0,0,.7) 95px,transparent 95px,transparent 98px,rgba(0,0,0,.7) 98px);
+	-webkit-transition:bottom .4s ease-in;
+}
+	.video-player-bar.hide {
+		bottom:-65px;
+	}
+	.video-player-knob {
+		display:block;
+		position:absolute;
+		background:#FFF;
+		border-radius:22px;
+		width:44px;
+		height:44px;
+		bottom:46px;
+		left:161px;
+		opacity:.6;
+		-webkit-box-shadow:0 0 3px rgba(0,0,0,.8);
+		-webkit-transition:opacity .4s ease-in;
+	}
+		.video-player-knob::before {
+			content:'';
+			display:block;
+			width:1px;
+			background:#FFF;
+			height:16px;
+			bottom:-16px;
+			left:21px;
+			position:absolute;
+		}
+		.video-player-bar.hide .video-player-knob {
+			opacity:0;
+		}
+	.video-player-bar .video-player-play {
+		display:inline-block;
+		height:100%;
+		width:95px;
+		border:none;
+		-webkit-box-sizing:border-box;
+		padding:0;
+		margin-right:16px;
+		background:transparent;
+		text-align:center;
+	}
+		.video-player-bar .video-player-play:before, .video-player-bar .video-player-play:after {
+			content:'';
+			display:inline-block;
+		}
+		.video-player-bar .video-player-play.play:before {
+			border-style:solid;
+			border-width:12px;
+			border-color:transparent transparent transparent #FFF;
+			margin:5px 0 0 9px;
+		}
+		.video-player-bar .video-player-play.pause:before, .video-player-bar .video-player-play.pause:after {
+			width:5px;
+			height:24px;
+			background:#FFF;
+			margin:5px 3px 0 3px;
+		}
+	.video-player-bar span {
+		font-size:21px;
+		width:50px;
+		margin:23px 11px 0 11px;
+		display:inline-block;
+		vertical-align:top;
+		text-shadow:0 0 4px rgba(0,0,0,.8);
+	}
+.video-player-bar .video-player-seek {
+	height:4px;
+	width:100px;
+	border-radius:2px;
+	background:#FFF;
+	margin:31px 10px 0 0;
+	vertical-align:top;
+	-webkit-appearance:none;
+}
+	.video-player-bar .video-player-seek::-webkit-progress-bar-value {
+		background:-webkit-linear-gradient(top, #37d0ff, #35addb);
+		border-radius:2px;
+	}

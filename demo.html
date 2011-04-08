@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<title>Video Player Demo</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="./video.css" media="screen" />
+		<style type="text/css">
+			body { font-family:Helvetica,Arial,sans-serif; }
+		</style>
+	</head>
+	<body>
+		<video id="video" preload="preload" width="621" height="264">
+			<source src="./oceans.theora.ogv" type='video/ogg; codecs="theora, vorbis"' />
+		</video>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+		<script type="text/javascript" src="./video.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function(){ var video = new videoPlayer($('#video'),{}); });
+		</script>
+	</body>
+</html>
