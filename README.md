@@ -37,5 +37,5 @@ It currently only works in **Webkit** browsers (since that was the only browser 
 
 * There's a gap that appears under the controls when it slides down to hide
 * Sliding too quickly and immediately releasing the handle will result in the video jumping back to the original pre-slide time
-* There's no way to style <progress> elements in non-Webkit browsers, so that will have to be replaced for this to be used in other browsers
+* There's no way to style &lt;progress&gt; elements in non-Webkit browsers, so that will have to be replaced for this to be used in other browsers
 * Isn't implemented as a jQuery plugin, which it probably should be since it depends on jQuery
