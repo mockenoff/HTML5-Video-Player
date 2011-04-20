@@ -17,7 +17,7 @@ function videoPlayer($elem, options) {
 	this.$maxt = $('<span class="video-player-duration">0.00</span>');
 	this.$ctrl = $('<div class="video-player-bar hide">');
 	this.$knob = $('<a class="video-player-knob">');
-	this.$skip = $('<a class="video-player-skip">x</a>');
+	this.$skip = $('<a class="video-player-skip">');
 	this.$skin = $('<div class="video-player">').width($elem.width()).height($elem.height()).append($elem).append($this.$ctrl.append($this.$play).append($this.$time).append($this.$seek).append($this.$maxt).append($this.$knob));
 	this.$wrap = $('<div class="video-player-wrapper">').css('display','none').appendTo('body').append(this.$skin).append(this.$skip);
 

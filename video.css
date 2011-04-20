@@ -19,6 +19,9 @@
 		text-align:center;
 		font-size:30px;
 	}
+		.video-player-wrapper .video-player-skip::before {
+			content:'x';
+		}
 .video-player {
 	position:absolute;
 	overflow:hidden;
