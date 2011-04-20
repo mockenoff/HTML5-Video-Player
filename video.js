@@ -5,8 +5,8 @@ function videoPlayer($elem, options) {
 	$.extend(this.settings, options);
 
 	this.opened = false;
-	this.seeking = false;
 	this.htimer = null;
+	this.seeking = false;
 	this.control = false;
 
 	this.$elem = $elem.css('pointer-events','none');
