@@ -74,15 +74,24 @@ function videoPlayer($elem, options) {
 		var minutes = Math.floor(time / 60);
 		return minutes+'.'+(seconds.toString().length == 1 ? '0' : '')+seconds;
 	};
-	this.setTime = function(time){
+	this.rangeTime = function(time){
 		time = parseFloat(time);
 		var vduration = parseFloat($this.$elem.attr('duration'));
 		if(time > vduration) time = vduration;
 		else if(time < 0) time = 0;
-		$this.$elem.attr('currentTime',time);
+		return time;
+	};
+	this.setSeek = function(time){
+		time = $this.rangeTime(time);
+		var vduration = parseFloat($this.$elem.attr('duration'));
 		$this.$time.html($this.formatTime(time));
 		$this.$seek.val(time).html(time / vduration);
 		$this.$knob.css('left',($this.$seek.offset().left - $this.$skin.offset().left) + ($this.$seek.width() * (time / vduration)) - ($this.$knob.width() / 2));
+	};
+	this.setTime = function(time){
+		time = $this.rangeTime(time);
+		$this.$elem.attr('currentTime',time);
+		$this.setSeek(time);
 	};
 	this.setPosition = function(pageX) {
 		$this.setTime(parseFloat((pageX - $this.$seek.offset().left) / $this.$seek.width()) * parseFloat($this.$elem.attr('duration')));
@@ -93,7 +102,7 @@ function videoPlayer($elem, options) {
 		if($this.$elem.attr('readyState')) {
 			var updateTime = function(ev){
 				if(!$this.seeking) {
-					$this.setTime($this.$elem.attr('currentTime'));
+					$this.setSeek($this.$elem.attr('currentTime'));
 					if($this.$elem.attr('currentTime') >= $this.$elem.attr('duration')) {
 						$this.stop();
 						if($this.settings.autoClose) $this.close();
@@ -131,21 +140,21 @@ function videoPlayer($elem, options) {
 	this.$skip.mousedown(function(){ $this.settings.skip(); });
 	this.$seek.mousedown(function(ev){ $this.setPosition(ev.pageX); });
 	this.$knob.mousedown(function(ev){
+		$this.seeking = true;
+		$this.clearTimer();
 		$this.pause();
 		$this.$wrap.mousemove(function(ev){
 			$this.setPosition(ev.pageX);
-			$this.seeking = true;
-			$this.clearTimer();
 		});
 		$this.$wrap.mouseup(function(ev){
-			if($this.$elem.attr('currentTime') < $this.$elem.attr('duration')) $this.play();
+			$this.seeking = false;
 			$this.resetTimer();
 			$this.$wrap.unbind('mouseup').unbind('mousemove');
-			if($this.$elem.attr('currentTime') >= $this.$elem.attr('duration')) {
+			if($this.$elem.attr('currentTime') < $this.$elem.attr('duration')) $this.play();
+			else {
 				$this.stop();
 				if($this.settings.autoClose) $this.close();
 			}
-			$this.seeking = false;
 		});
 	});
 }
