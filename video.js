@@ -90,11 +90,16 @@ function videoPlayer($elem, options) {
 	};
 	this.setTime = function(time){
 		time = $this.rangeTime(time);
-		$this.$elem.attr('currentTime',time);
+		if($this.seeking) $this.$elem.attr('currentTime',time);
 		$this.setSeek(time);
 	};
 	this.setPosition = function(pageX) {
 		$this.setTime(parseFloat((pageX - $this.$seek.offset().left) / $this.$seek.width()) * parseFloat($this.$elem.attr('duration')));
+	};
+
+	this.setOpt = function(opt,val){
+		$this.settings[opt] = val;
+		return $this;
 	};
 
 	// Things don't really start until the video is ready, i.e. video.readyState == true
@@ -102,7 +107,7 @@ function videoPlayer($elem, options) {
 		if($this.$elem.attr('readyState')) {
 			var updateTime = function(ev){
 				if(!$this.seeking) {
-					$this.setSeek($this.$elem.attr('currentTime'));
+					$this.setTime($this.$elem.attr('currentTime'));
 					if($this.$elem.attr('currentTime') >= $this.$elem.attr('duration')) {
 						$this.stop();
 						if($this.settings.autoClose) $this.close();
