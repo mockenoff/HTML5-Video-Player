@@ -46,7 +46,7 @@ It currently only works in **Webkit** browsers (since that was the only browser 
 HTML5 Video Text Track Plugin v0.2
 ==================================
 
-** This is a VTT shim that is designed to work alongside the HTML5 video player plugin **
+**This is a VTT shim that is designed to work alongside the HTML5 video player plugin.**
 
 I decided to lump this into my player plugin. It's very basic and just a first-time attempt at fill my need for video captions while adhering to WHATWG spec for web applications 1.0 (http://www.whatwg.org/specs/web-apps/current-work/multipage/video.html#webvtt).
 
@@ -77,7 +77,7 @@ While it was designed mainly to be used with videos (hence using the VTT, or vid
 As I said before, this is a preliminary attempt at making this and currently fulfills my only need, which is to display captions below a video. I'll eventually make it more robust and more compliant to the spec. The parse currrently only accepts segments of the following format:
 
 	WEBVTT FILE
-	
+
 	[0-9]+
 	[hh:]mm:ss.xxx --> [hh:]mm:ss.xxx
 	Followed by as many lines as you so desire
