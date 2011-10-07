@@ -244,7 +244,7 @@ function videoTrack($video, $track, options) {
 
 	// grabs the track file through XHR and sends it to the parsing function
 	self.loadTrack = function(src){
-		$.ajax($track.attr('src'),{dataType:'text',complete:function(data){
+		$.ajax(src,{dataType:'text',complete:function(data){
 			self.loaded = true;
 			self.parseLines(data.responseText.replace('\r','').split('\n'));
 			if(self.settings.on_load && typeof(self.settings.on_load) === 'function') {
