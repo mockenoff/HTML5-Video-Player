@@ -11,11 +11,17 @@
 	<body>
 		<video id="video" preload="preload" width="621" height="264">
 			<source src="./oceans.theora.ogv" type='video/ogg; codecs="theora, vorbis"' />
+			<track kind="captions" src="./oceans.vtt" />
 		</video>
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
 		<script type="text/javascript" src="./video.js"></script>
 		<script type="text/javascript">
-			$(document).ready(function(){ var video = new videoPlayer($('#video'),{}); });
+			$(document).ready(function(){
+				var v = $('#video'),
+					t = v.find('track'),
+					video = new videoPlayer(v);
+				video.track = new videoTrack(v,t,{$container:video.$wrap});
+			});
 		</script>
 	</body>
 </html>

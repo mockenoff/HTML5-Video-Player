@@ -107,8 +107,35 @@
 	margin:31px 10px 0 0;
 	vertical-align:top;
 	-webkit-appearance:none;
+	display:inline-block;
 }
-	.video-player-bar .video-player-seek::-webkit-progress-bar-value {
+	.video-player-bar .video-player-fill, .video-player-bar .video-player-seek::-webkit-progress-bar-value {
+		height:100%;
 		background:-webkit-linear-gradient(top, #37d0ff, #35addb);
 		border-radius:2px;
 	}
+
+.track-wrapper {
+	top:65%;
+	left:0;
+	position:absolute;
+	width:100%;
+	z-index:99999;
+	color:#FFF;
+	overflow:hidden;
+	font-size:26px;
+	text-shadow:1px 1px 2px #000;
+	-webkit-transition:all .5s ease-in;
+}
+	.track-wrapper.hide {
+		opacity:0;
+		z-index:0;
+		pointer-events:none;
+	}
+	.track-wrapper p {
+		margin:0 auto;
+		overflow:hidden;
+	}
+		.track-wrapper p.hide {
+			height:0;
+		}

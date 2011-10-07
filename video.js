@@ -13,13 +13,16 @@ function videoPlayer($elem, options) {
 	this.video = $elem.get(0);
 	this.$play = $('<button class="video-player-play pause">');
 	this.$time = $('<span class="video-player-timer">0.00</span>');
-	this.$seek = $('<progress class="video-player-seek" value="0" max="0">0%</progress>');
+	this.$seek = $('<div class="video-player-seek" value="0" max="0"></div>');
+	this.$fill = $('<div class="video-player-fill"></div>');
 	this.$maxt = $('<span class="video-player-duration">0.00</span>');
 	this.$ctrl = $('<div class="video-player-bar hide">');
 	this.$knob = $('<a class="video-player-knob">');
 	this.$skip = $('<a class="video-player-skip">');
 	this.$skin = $('<div class="video-player">').width($elem.width()).height($elem.height()).append($elem).append($this.$ctrl.append($this.$play).append($this.$time).append($this.$seek).append($this.$maxt).append($this.$knob));
 	this.$wrap = $('<div class="video-player-wrapper">').css('display','none').appendTo('body').append(this.$skin).append(this.$skip);
+
+	this.$fill.appendTo(this.$seek);
 
 	this.open = function(){
 		$this.opened = true;
@@ -85,7 +88,8 @@ function videoPlayer($elem, options) {
 		time = $this.rangeTime(time);
 		var vduration = parseFloat($this.$elem.attr('duration'));
 		$this.$time.html($this.formatTime(time));
-		$this.$seek.val(time).html(time / vduration);
+		$this.$seek.val(time);//.html(time / vduration);
+		$this.$fill.width((time / vduration) * $this.$seek.width());
 		$this.$knob.css('left',($this.$seek.offset().left - $this.$skin.offset().left) + ($this.$seek.width() * (time / vduration)) - ($this.$knob.width() / 2));
 	};
 	this.setTime = function(time){
@@ -162,4 +166,128 @@ function videoPlayer($elem, options) {
 			}
 		});
 	});
+}
+
+function videoTrack($video, $track, options) {
+	var self = this;
+
+	self.settings = {on_load:null,on_loadfail:null,on_parse:null,$container:null};
+	$.extend(this.settings, options);
+
+	self.$wrap = $('<div class="track-wrapper hide">').appendTo((self.settings.$container !== null ? self.settings.$container : 'body'));
+	self.$video = $video;
+	self.$track = $track;
+	self.loaded = false;
+	self.parsed = false;
+	self.track = {};
+	self.active = null;
+
+	// Takes a string formatted as [hh:]mm:ss.xxx and returns it as (int)milliseconds
+	self.str2ms = function(str){
+		var t = str.match(/^(?:([0-9]{2}):)?([0-9]{2}):([0-9]{2})\.([0-9]{3})$/);
+		if(t === null) {
+			return 0;
+		}
+		return ((((((t[1] !== undefined ? parseInt(t[1],10) : 0) * 60) + parseInt(t[2],10)) * 60) + parseInt(t[3],10)) * 1000) + parseInt(t[4],10);
+	};
+
+	// Takes a number of (int)seconds and returns (int)milliseconds
+	self.sec2ms = function(sec){
+		return Math.round(sec * 1000);
+	};
+
+	// the parsing loop function that iterates through the lines of a track file and dumps lines and times to an object
+	self.parseLines = function(d){
+		var t = 0,
+			start = 0,
+			end = 0;
+		self.track = {};
+		self.active = null;
+		for(var i = 0; i < d.length; i++) {
+			d[i] = d[i].replace('\r','').replace('\n','');
+			if(t === 2) {
+				if(/^$/.test(d[i]) !== true) {
+					if(self.track[start] === undefined) {
+						self.track[start] = {end:end,lines:[]};
+					}
+					self.track[start].lines.push(d[i]);
+					self.$wrap.append('<p class="'+start.toString()+' hide">'+d[i]+'</p>');
+				}
+				else {
+					t = 0;
+				}
+			}
+			else {
+				if(t === 1) {
+					var l = d[i].match(/^((?:[0-9]{2}:)?[0-9]{2}:[0-9]{2}.[0-9]{3}) --> ((?:[0-9]{2}:)?[0-9]{2}:[0-9]{2}.[0-9]{3})$/);
+					if(l === null) {
+						t = 0;
+					}
+					else {
+						t = 2;
+						start = self.str2ms(l[1]);
+						end = self.str2ms(l[2]);
+					}
+				}
+				if(t === 0) {
+					if(/^[0-9]+$/.test(d[i]) === true) {
+						t = 1;
+					}
+				}
+			}
+		}
+		self.parsed = true;
+		if(self.settings.on_parse && typeof(self.settings.on_parse) === 'function') {
+			self.settings.on_parse();
+		}
+	};
+
+	// grabs the track file through XHR and sends it to the parsing function
+	self.loadTrack = function(src){
+		$.ajax($track.attr('src'),{dataType:'text',complete:function(data){
+			self.loaded = true;
+			self.parseLines(data.responseText.replace('\r','').split('\n'));
+			if(self.settings.on_load && typeof(self.settings.on_load) === 'function') {
+				self.settings.on_load();
+			}
+		}}).error(function(data){
+			self.loaded = false;
+			if(self.settings.on_loadfail && typeof(self.settings.on_loadfail) === 'function') {
+				self.settings.on_loadfail();
+			}
+		});
+	};
+
+	// show the current track line (resize and reposition everytime just in case)
+	self.show = function(k){
+		var vos = self.$video.offset();
+		self.$wrap.css('top',(vos.top+20+self.$video.height())+'px').css('left',vos.left+'px').removeClass('hide').find('p').addClass('hide').end().find('.'+k.toString()).removeClass('hide');
+	};
+
+	// hide the track
+	self.hide = function(){
+		self.$wrap.addClass('hide').find('p').addClass('hide');
+	};
+
+	// add a timeupdate event callback to the media to display tracks
+	self.$video.bind('timeupdate',function(e){
+		if(self.loaded === true || self.parsed === true) {
+			var t = self.sec2ms(e.currentTarget.currentTime);
+			for(var k in self.track) {
+				k = parseInt(k,10);
+				if(k > t || t > self.track[k].end) {
+					continue;
+				}
+//				if(self.active !== k) {
+					self.active = k;
+					self.show(k);
+//				}
+				return;
+			}
+			self.hide();
+		}
+	});
+
+	self.loadTrack(self.$track.attr('src'));
+	self.$wrap.width(self.$video.width());
 }
